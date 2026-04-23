@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaslerCamera", "BaslerCamera\BaslerCamera.csproj", "{641DBF35-6B35-415B-964C-B8A1FA54646B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{641DBF35-6B35-415B-964C-B8A1FA54646B}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{641DBF35-6B35-415B-964C-B8A1FA54646B}.Debug|Any CPU.Build.0 = Debug|x64
+		{641DBF35-6B35-415B-964C-B8A1FA54646B}.Debug|x64.ActiveCfg = Debug|x64
+		{641DBF35-6B35-415B-964C-B8A1FA54646B}.Debug|x64.Build.0 = Debug|x64
+		{641DBF35-6B35-415B-964C-B8A1FA54646B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{641DBF35-6B35-415B-964C-B8A1FA54646B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{641DBF35-6B35-415B-964C-B8A1FA54646B}.Release|x64.ActiveCfg = Release|x64
+		{641DBF35-6B35-415B-964C-B8A1FA54646B}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18C9684F-D4F3-42D6-B743-35EBB6E6F0C7}
+	EndGlobalSection
+EndGlobal
