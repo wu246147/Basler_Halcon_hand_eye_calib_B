@@ -1,4 +1,4 @@
-namespace BaslerCamera
+﻿namespace BaslerCamera
 {
     partial class FormBaslerCam
     {
@@ -51,6 +51,7 @@ namespace BaslerCamera
             this.button加载图像 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.button_getLightMap = new System.Windows.Forms.Button();
             this.button_transform = new System.Windows.Forms.Button();
             this.label54 = new System.Windows.Forms.Label();
             this.numericUpDown_lightTime = new System.Windows.Forms.NumericUpDown();
@@ -159,7 +160,7 @@ namespace BaslerCamera
             this.label52 = new System.Windows.Forms.Label();
             this.textBox_LightInCam_RZ = new System.Windows.Forms.TextBox();
             this.label53 = new System.Windows.Forms.Label();
-            this.button_getLightMap = new System.Windows.Forms.Button();
+            this.radioButton_kawasaki = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_time)).BeginInit();
             this.panelWindow.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -427,6 +428,16 @@ namespace BaslerCamera
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
+            // button_getLightMap
+            // 
+            this.button_getLightMap.Location = new System.Drawing.Point(213, 77);
+            this.button_getLightMap.Name = "button_getLightMap";
+            this.button_getLightMap.Size = new System.Drawing.Size(75, 23);
+            this.button_getLightMap.TabIndex = 37;
+            this.button_getLightMap.Text = "光平面转换tiff";
+            this.button_getLightMap.UseVisualStyleBackColor = true;
+            this.button_getLightMap.Click += new System.EventHandler(this.button_getLightMap_Click);
+            // 
             // button_transform
             // 
             this.button_transform.Location = new System.Drawing.Point(257, 254);
@@ -557,13 +568,14 @@ namespace BaslerCamera
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.radioButton_kawasaki);
             this.panel1.Controls.Add(this.radioButton_kuka);
             this.panel1.Controls.Add(this.radioButton发那科);
             this.panel1.Controls.Add(this.radioButton安川);
             this.panel1.Controls.Add(this.radioButton节卡);
             this.panel1.Location = new System.Drawing.Point(63, 27);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(269, 30);
+            this.panel1.Size = new System.Drawing.Size(275, 30);
             this.panel1.TabIndex = 37;
             // 
             // radioButton_kuka
@@ -1528,15 +1540,16 @@ namespace BaslerCamera
             this.label53.TabIndex = 31;
             this.label53.Text = "RX:";
             // 
-            // button_getLightMap
+            // radioButton_kawasaki
             // 
-            this.button_getLightMap.Location = new System.Drawing.Point(213, 77);
-            this.button_getLightMap.Name = "button_getLightMap";
-            this.button_getLightMap.Size = new System.Drawing.Size(75, 23);
-            this.button_getLightMap.TabIndex = 37;
-            this.button_getLightMap.Text = "光平面转换tiff";
-            this.button_getLightMap.UseVisualStyleBackColor = true;
-            this.button_getLightMap.Click += new System.EventHandler(this.button_getLightMap_Click);
+            this.radioButton_kawasaki.AutoSize = true;
+            this.radioButton_kawasaki.Location = new System.Drawing.Point(223, 6);
+            this.radioButton_kawasaki.Name = "radioButton_kawasaki";
+            this.radioButton_kawasaki.Size = new System.Drawing.Size(47, 16);
+            this.radioButton_kawasaki.TabIndex = 2;
+            this.radioButton_kawasaki.Text = "川崎";
+            this.radioButton_kawasaki.UseVisualStyleBackColor = true;
+            this.radioButton_kawasaki.CheckedChanged += new System.EventHandler(this.radioButton节卡_CheckedChanged);
             // 
             // FormBaslerCam
             // 
@@ -1712,6 +1725,7 @@ namespace BaslerCamera
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.RadioButton radioButton_kuka;
         private System.Windows.Forms.Button button_getLightMap;
+        private System.Windows.Forms.RadioButton radioButton_kawasaki;
     }
 }
 

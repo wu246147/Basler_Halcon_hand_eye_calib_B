@@ -69,6 +69,7 @@
       <DependentUpon>FormBaslerCam.cs</DependentUpon>
     </Compile>
     <Compile Include="IO\TCPServer.cs" />
+    <Compile Include="IO\TCPSocket.cs" />
     <Compile Include="MVCamera.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

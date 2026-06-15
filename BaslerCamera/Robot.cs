@@ -1,3 +1,5 @@
+﻿using BaslerCamera.IO;
+using BaslerCamera;
 using HalconDotNet;
 using HslCommunication;
 using HslCommunication.Core;
@@ -718,5 +720,252 @@ namespace BaslerCamera
             return true;
         }
     }
+public class KawasakiRobot : IRobot
+    {
 
+        public string serializationInfo(double x, double y, double z, double a, double b, double c, int result, string setflat)
+        {
+            return "";
+        }
+
+        private static bool deserializationInfo(string info, out float X, out float Y, out float Z, out float RX, out float RY, out float RZ, out float R1, out float R2, out float R3, out float R4, out float R5, out float R6, out int programID, out int commandID, out int pointID)
+        {
+            X = 0;
+            Y = 0;
+            Z = 0;
+            RX = 0;
+            RY = 0;
+            RZ = 0;
+            R1 = 0;
+            R2 = 0;
+            R3 = 0;
+            R4 = 0;
+            R5 = 0;
+            R6 = 0;
+            programID = 0;
+            commandID = 0;
+            pointID = 0;
+
+            try
+            {
+                // 去掉末尾的 #
+                string raw = info.TrimEnd('#').Trim();
+                string[] parts = raw.Split(',');
+
+                // 辅助：安全解析 float，空串或解析失败返回默认值
+                float SafeFloat(int index, float defaultValue = 0f)
+                {
+                    if (index < 0 || index >= parts.Length) return defaultValue;
+                    string s = parts[index].Trim();
+                    if (string.IsNullOrEmpty(s)) return defaultValue;
+                    return float.TryParse(s, System.Globalization.NumberStyles.Float,
+                        System.Globalization.CultureInfo.InvariantCulture, out float v) ? v : defaultValue;
+                }
+
+                // 辅助：安全解析 int
+                int SafeInt(int index, int defaultValue = 0)
+                {
+                    if (index < 0 || index >= parts.Length) return defaultValue;
+                    string s = parts[index].Trim();
+                    if (string.IsNullOrEmpty(s)) return defaultValue;
+                    return int.TryParse(s, out int v) ? v : defaultValue;
+                }
+
+                // ---- 关节角 J1~J6 (索引 7~12) ----
+                R1 = SafeFloat(7);    // J1: -86.6277
+                R2 = SafeFloat(8);    // J2: -27.53063
+                R3 = SafeFloat(9);    // J3: -18.65816
+                R4 = SafeFloat(10);   // J4: -178.16177
+                R5 = SafeFloat(11);   // J5: 12.41696
+                R6 = SafeFloat(12);   // J6: -5.59366
+
+                // ---- 末端位姿 X,Y,Z,RX,RY,RZ (倒数第 7~2 位) ----
+                int total = parts.Length;
+                X = SafeFloat(total - 6);   // -2446.65137
+                Y = SafeFloat(total - 5);   // 218.11565
+                Z = SafeFloat(total - 4);   // 2085.89941
+                RX = SafeFloat(total - 3);   // 87.2569
+                RY = SafeFloat(total - 2);   // 86.23324
+                RZ = SafeFloat(total - 1);   // -3.54589
+
+                //zyz 转 xyz
+                double transformRX = 0, transformRY = 0, transformRz = 0;
+                int robot_r_type = 2;   //机器人的坐标系类型，0为xyz，1为zyx，2为zyz
+                int alg_r_type = 0;      //相机的坐标系类型，默认都是0，0为xyz，1为zyx，2为zyz
+
+                Tool.transformCartPose2(RX, RY, RZ, robot_r_type, ref transformRX, ref transformRY, ref transformRz, alg_r_type);
+
+                RX = (float)transformRX;
+                RY = (float)transformRY;
+                RZ = (float)transformRz;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[deserializationInfo] 解析异常: {ex.Message}");
+                return false;
+            }
+        }
+
+
+        public string ErrMsg => _errMsg;
+        string _errMsg;
+        public bool IsOpen => _isOpen;
+        bool _isOpen = false;
+
+        string _ip = string.Empty;
+        int _port = 60008;
+        //HslCommunication.Robot.FANUC.FanucInterfaceNet robot = new HslCommunication.Robot.FANUC.FanucInterfaceNet();
+
+        TCP_Client robot;
+
+        //寄存数据
+        bool _isExist = false;
+        float _X = 0, _Y = 0, _Z = 0, _RX = 0, _RY = 0, _RZ = 0,
+            _R1 = 0, _R2 = 0, _R3 = 0, _R4 = 0, _R5 = 0, _R6 = 0;
+        int _programID = 0, _commandID = 0, _pointID = 0;
+
+        bool _isConnected = false;
+
+        public KawasakiRobot()
+        {
+
+        }
+
+        public bool ReadPose(out HPose hPose)
+        {
+            //var read = robot.ReadFanucData();
+            if (_isExist)
+            {
+                double x = _X / 1000;
+                double y = _Y / 1000;
+                double z = _Z / 1000;
+                double rx = _RX;
+                double ry = _RY;
+                double rz = _RZ;
+                hPose = new HPose(x, y, z, rx, ry, rz, "Rp+T", "abg", "point");
+
+
+                string info = serializationInfo(_X, _Y, _Z, _RZ, _RY, _RX, 1, "11");
+                robot.Send(info + "\r\n");
+            }
+            else
+            {
+                hPose = null;
+            }
+            return _isExist;
+        }
+
+          public bool ReadAngle(out HTuple hAngle)
+        {
+            hAngle = new HTuple();
+
+            if (_isExist)
+            {
+                double r1 = _R1;
+                double r2 = _R2;
+                double r3 = _R3;
+                double r4 = _R4;
+                double r5 = _R5;
+                double r6 = _R6;
+                hAngle = new HTuple(r1, r2, r3, r4, r5,r6);
+                //string info = serializationInfo(_X, _Y, _Z, _RZ, _RY, _RX, 1, "11");
+
+                //robot.Send(info + "\r\n");
+
+            }
+            else
+            {
+                hAngle = null;
+            }
+
+            return true;
+        }
+
+
+        public bool Load()
+        {
+            _ip = "192.168.255.1";
+            _port = 60008;
+            return true;
+        }
+
+        public bool Save()
+        {
+            return true;
+        }
+        void ProcessInfo(string info)
+        {
+            ///
+            /// 信号处理
+            ///
+
+            //序列化信息
+            float X, Y, Z, RX, RY, RZ, R1, R2, R3, R4, R5, R6;
+            int programID, commandID, pointID;
+
+            bool rt = deserializationInfo(info, out X, out Y, out Z, out RX, out RY, out RZ, out R1, out R2, out R3, out R4, out R5, out R6, out programID, out commandID, out pointID);
+            // 更新缓存数据
+            if (rt)
+            {
+                _isExist = true;
+            }
+            else
+            {
+                _isExist = false;
+            }
+            _X = X;
+            _Y = Y;
+            _Z = Z;
+            _RX = RX;
+            _RY = RY;
+            _RZ = RZ;
+
+            _R1 = R1;
+            _R2 = R2;
+            _R3 = R3;
+            _R4 = R4;
+            _R5 = R5;
+            _R6 = R6;
+
+        }
+
+        public bool isOpen()
+        {
+            return IsOpen;
+        }
+
+        public bool isConnected()
+        {
+            return true;
+        }
+        public bool Open()
+        {
+            robot = new TCP_Client(_ip, _port);
+            //绑定委托与事件
+            robot.OnDataReceived += ProcessInfo;
+            //开始监听
+            robot.Connect();
+
+            _isOpen = true;
+            return true;
+        }
+        public bool Open(string ip, int port)
+        {
+            _ip = ip;
+            _port = port;
+            return Open();
+        }
+
+        public bool Close()
+        {
+            if (robot != null)
+            {
+                robot.Disconnect();
+            }
+            _isOpen = false;
+            return true;
+        }
+    }
 }

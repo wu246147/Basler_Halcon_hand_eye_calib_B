@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -56,7 +56,7 @@ namespace BaslerCamera
 
         private void btn_FindCam_Click(object sender, EventArgs e)
         {
-            if (cam.Find(out string[] names, out string[] SNs, out MV_CC_DEVICE_INFO[] DeviceList))
+            if (cam.Find(out string[] names, out string[] SNs, out string[] ManufacturerNames, out MV_CC_DEVICE_INFO[] DeviceList))
             {
                 comboBox_CamID.Items.Clear();
                 ShowMessage("找到" + DeviceList.Length + "个相机");
@@ -399,7 +399,7 @@ namespace BaslerCamera
         }
         private void InitRobot(object sender, EventArgs e)
         {
-            if (robot.GetType() == typeof(KukaRobot) && radioButton_kuka.Checked)
+            if ((robot.GetType() == typeof(KukaRobot) && radioButton_kuka.Checked) || robot.GetType() == typeof(KawasakiRobot) && radioButton_kawasaki.Checked)
             {
 
                 if (textBoxRobotIP.Text != "" && textBoxRobotPort.Text != "" && !robot.isOpen())
@@ -2251,7 +2251,7 @@ namespace BaslerCamera
         private void radioButton节卡_CheckedChanged(object sender, EventArgs e)
         {
             //先判断一下是不是库卡机器人，是的话，要先关闭通讯
-            if (robot.GetType() == typeof(KukaRobot))
+            if (robot.GetType() == typeof(KukaRobot) || robot.GetType() == typeof(KawasakiRobot))
             {
                 robot.Close();
             }
@@ -2272,6 +2272,11 @@ namespace BaslerCamera
             {
                 robot = new KukaRobot();
             }
+            else if (radioButton_kawasaki.Checked)
+            {
+                robot = new KawasakiRobot();
+            }
+
             else
             {
                 robot = new JAKARobot();
